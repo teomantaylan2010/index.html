@@ -1,0 +1,149 @@
+diff --git a//dev/null b/index.html
+index 0000000000000000000000000000000000000000..d4a9a567c7e9bf6e101d7e27a53e64c593b83f75 100644
+--- a//dev/null
++++ b/index.html
+@@ -0,0 +1,144 @@
++<!DOCTYPE html>
++<html lang="fr">
++<head>
++<meta charset="UTF-8">
++<meta name="viewport" content="width=device-width, initial-scale=1.0">
++<title>Moteur de recherche multi-sites</title>
++<style>
++body {
++  margin:0;
++  font-family:Arial, Helvetica, sans-serif;
++  color:#fff;
++  min-height:100vh;
++  display:flex;
++  justify-content:center;
++  align-items:center;
++  text-align:center;
++}
++body::before{
++  content:"";
++  position:fixed;
++  inset:0;
++  background:url('https://picsum.photos/1920/1080?blur=10') center/cover no-repeat;
++  filter:blur(8px);
++  z-index:-1;
++}
++main{
++  background:rgba(0,0,0,0.6);
++  backdrop-filter:blur(4px);
++  padding:2rem;
++  border-radius:12px;
++  width:90%;
++  max-width:600px;
++}
++input[type="text"], input[type="file"]{
++  width:100%;
++  padding:0.6rem;
++  margin:0.5rem 0;
++  border:1px solid #444;
++  border-radius:4px;
++  background:#1e1e1e;
++  color:#fff;
++}
++button{
++  padding:0.6rem 1rem;
++  border:none;
++  border-radius:4px;
++  background:#6200ee;
++  color:#fff;
++  cursor:pointer;
++}
++button:hover{background:#7e3ff2;}
++#links ul{list-style:none;padding:0;}
++#links li{margin:0.5rem 0;}
++#links a{color:#8ab4f8;text-decoration:none;}
++#copyLinks{display:none;margin-top:1rem;}
++#preview{display:none;margin-top:1rem;max-width:100%;border-radius:8px;}
++#imageLinks a{display:none;margin:0 0.5rem;color:#8ab4f8;}
++@media(max-width:600px){main{padding:1rem;}}
++</style>
++</head>
++<body>
++<main>
++  <h1>Recherche multi-sites</h1>
++  <section id="keywordSearch">
++    <form id="keywordForm">
++      <input type="text" id="keyword" placeholder="Mot-clé (ex: sac Prada noir)" required>
++      <button type="submit">Rechercher</button>
++    </form>
++    <div id="links"></div>
++    <button id="copyLinks">Copier tous les liens</button>
++  </section>
++
++  <hr>
++
++  <section id="imageSearch">
++    <h2>Recherche par image</h2>
++    <input type="file" id="imageInput" accept="image/*">
++    <img id="preview" alt="Image sélectionnée">
++    <div id="imageLinks">
++      <a id="lensLink" href="https://lens.google.com/upload" target="_blank">Ouvrir Google Lens</a>
++      <a id="bingLink" href="https://www.bing.com/images/search" target="_blank">Ouvrir Bing Image Search</a>
++    </div>
++  </section>
++</main>
++
++<script>
++const keywordForm = document.getElementById('keywordForm');
++const linksDiv = document.getElementById('links');
++const copyBtn = document.getElementById('copyLinks');
++
++keywordForm.addEventListener('submit', (e) => {
++  e.preventDefault();
++  const keyword = document.getElementById('keyword').value.trim();
++  linksDiv.innerHTML = '';
++  if (!keyword) return;
++
++  const sites = [
++    {name: 'Vinted', url: 'https://www.vinted.fr/catalog?search_text=' + encodeURIComponent(keyword)},
++    {name: 'CNFans', url: 'https://www.cnfans.store/search?q=' + encodeURIComponent(keyword)}
++  ];
++
++  const list = document.createElement('ul');
++  sites.forEach(site => {
++    const li = document.createElement('li');
++    const a = document.createElement('a');
++    a.href = site.url;
++    a.textContent = site.name;
++    a.target = '_blank';
++    li.appendChild(a);
++    list.appendChild(li);
++  });
++
++  linksDiv.appendChild(list);
++  copyBtn.style.display = 'inline-block';
++});
++
++copyBtn.addEventListener('click', () => {
++  const urls = Array.from(linksDiv.querySelectorAll('a')).map(a => a.href).join('\n');
++  navigator.clipboard.writeText(urls).then(() => {
++    copyBtn.textContent = 'Liens copiés !';
++    setTimeout(() => copyBtn.textContent = 'Copier tous les liens', 2000);
++  });
++});
++
++const imageInput = document.getElementById('imageInput');
++const preview = document.getElementById('preview');
++const lensLink = document.getElementById('lensLink');
++const bingLink = document.getElementById('bingLink');
++
++imageInput.addEventListener('change', () => {
++  const file = imageInput.files[0];
++  if (!file) return;
++  const reader = new FileReader();
++  reader.onload = (e) => {
++    preview.src = e.target.result;
++    preview.style.display = 'block';
++    lensLink.style.display = 'inline-block';
++    bingLink.style.display = 'inline-block';
++  };
++  reader.readAsDataURL(file);
++});
++</script>
++</body>
++</html>
